@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:title="Profile"
+        android:id="@+id/menu_profile"
+        android:icon="@drawable/profile_selector"/>
+
+    <item
+        android:title="Education"
+        android:id="@+id/menu_education"
+        android:icon="@drawable/graduation_selector"/>
+
+    <item
+        android:title="Experience"
+        android:id="@+id/menu_job"
+        android:icon="@drawable/job_selector"/>
+
+    <item
+        android:title="Projects"
+        android:id="@+id/menu_setting"
+        android:icon="@drawable/project_selector"/>
+
+</menu>

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".fragment.EducationFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@color/sky"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/rl_education_illustration"/>
+
+    <RelativeLayout
+        android:id="@+id/rl_education_illustration"
+        android:layout_width="wrap_content"
+        android:layout_height="200dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.1">
+
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="200dp"
+            android:id="@+id/img_tree"
+            android:layout_marginBottom="-45dp"
+            android:layout_marginStart="-300dp"
+            android:src="@drawable/ic_tree"
+            android:layout_above="@id/img_road" />
+
+        <ImageView
+            android:id="@+id/img_bus"
+            android:layout_width="150dp"
+            android:layout_height="100dp"
+            android:layout_centerInParent="true"
+            android:layout_above="@id/img_road"
+            android:layout_marginBottom="-15dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:src="@drawable/ic_bus"/>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_plain_road"
+            android:id="@+id/img_road"
+            android:layout_alignParentBottom="true"/>
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/ic_sun"
+            android:layout_marginStart="90dp"
+            android:id="@+id/img_sun"/>
+
+
+
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/ic_cloud_white"
+            android:id="@+id/img_cloud"
+            android:layout_above="@id/img_bus"
+            android:layout_marginBottom="30dp"
+            android:layout_marginStart="-100dp"/>
+
+    </RelativeLayout>
+
+    <com.GeekyRaghavan.vijayportfolio.custom.CustomTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/customTextView_education"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginRight="16dp"
+        android:gravity="center"
+        android:textStyle="bold"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/rl_education_illustration" />
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
