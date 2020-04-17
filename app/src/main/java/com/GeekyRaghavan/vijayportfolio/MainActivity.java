@@ -55,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG_FRAGMENT_TWO = "fragment_two";
     private static final String TAG_FRAGMENT_THREE = "fragment_three";
     private static final String TAG_FRAGMENT_FOUR = "fragment_four";
+    private static final String TAG_SAVED_FRAGMENT = "saved_fragment";
 
     private Fragment currentFragment;
 
@@ -130,11 +131,18 @@ public class MainActivity extends AppCompatActivity {
 
 
         fragmentManager = getSupportFragmentManager();
-        Fragment fragment = fragmentManager.findFragmentByTag(TAG_FRAGMENT_ONE);
-        if (fragment == null) {
-            fragment = new ProfileFragment();
+        Fragment fragment;
+        if (savedInstanceState!=null){
+            fragment = getSupportFragmentManager().getFragment(savedInstanceState, TAG_SAVED_FRAGMENT);
+            currentFragment = fragment;
+        }else {
+            fragment = fragmentManager.findFragmentByTag(TAG_FRAGMENT_ONE);
+            if (fragment == null) {
+                fragment = new ProfileFragment();
+            }
+            replaceFragment(fragment, TAG_FRAGMENT_ONE);
         }
-        replaceFragment(fragment, TAG_FRAGMENT_ONE);
+
 
         bottomNavigationView.setSelectedItemId(R.id.menu_profile);
 
@@ -226,5 +234,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        getSupportFragmentManager().putFragment(outState, TAG_SAVED_FRAGMENT, currentFragment);
+    }
 }

@@ -26,7 +26,10 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +49,9 @@ public class JobFragment extends Fragment {
     private RecyclerView recyclerView;
     private JobRecyclerViewAdapter adapter;
     Animation bottomUp;
+    Gson gson;
+    List<SingleJob> singleJobList;
+    private final String SAVE_STATE = "savestate";
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -88,6 +94,9 @@ public class JobFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_job, container, false);
 
+        gson = new Gson();
+        singleJobList = new ArrayList<>();
+
         img_coffee_stream = view.findViewById(R.id.img_coffee_stream);
         bottomUp = AnimationUtils.loadAnimation(getContext(), R.anim.bottom_up_with_fade_out);
 //        bottomUp.setRepeatMode(Animation.RESTART);
@@ -99,47 +108,55 @@ public class JobFragment extends Fragment {
         adapter = new JobRecyclerViewAdapter();
         recyclerView.setAdapter(adapter);
 
-        NetworkDetector detector = new NetworkDetector(getContext());
-        if (detector.isNetworkAvailable()) {
+        if (savedInstanceState == null) {
+            NetworkDetector detector = new NetworkDetector(getContext());
+            if (detector.isNetworkAvailable()) {
 
-            FirebaseFirestore db = FirebaseFirestore.getInstance();
-            db.collection("jobs")
-                    .get()
-                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if (task.isSuccessful()) {
-                                List<SingleJob> singleJobList = new ArrayList<>();
-                                for (QueryDocumentSnapshot document : task.getResult()) {
-                                    Log.e("Vijay", document.getId() + " => " + document.getData());
-                                    Map<String, Object> keyValue = document.getData();
-                                    SingleJob singleJob = new SingleJob();
-                                    for (String key :
-                                            keyValue.keySet()) {
+                FirebaseFirestore db = FirebaseFirestore.getInstance();
+                db.collection("jobs")
+                        .get()
+                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    singleJobList.clear();
+                                    for (QueryDocumentSnapshot document : task.getResult()) {
+                                        Log.e("Vijay", document.getId() + " => " + document.getData());
+                                        Map<String, Object> keyValue = document.getData();
+                                        SingleJob singleJob = new SingleJob();
+                                        for (String key :
+                                                keyValue.keySet()) {
 
-                                        if (key.equals("name")) {
-                                            singleJob.setTitle(String.valueOf(keyValue.get(key)));
-                                        } else if (key.equals("role")) {
-                                            singleJob.setRole(String.valueOf(keyValue.get(key)));
-                                        } else if (key.equals("date")) {
-                                            singleJob.setDate(String.valueOf(keyValue.get(key)));
-                                        } else if (key.equals("imageLink")) {
-                                            singleJob.setImgLink(String.valueOf(keyValue.get(key)));
+                                            if (key.equals("name")) {
+                                                singleJob.setTitle(String.valueOf(keyValue.get(key)));
+                                            } else if (key.equals("role")) {
+                                                singleJob.setRole(String.valueOf(keyValue.get(key)));
+                                            } else if (key.equals("date")) {
+                                                singleJob.setDate(String.valueOf(keyValue.get(key)));
+                                            } else if (key.equals("imageLink")) {
+                                                singleJob.setImgLink(String.valueOf(keyValue.get(key)));
+                                            }
                                         }
+                                        singleJobList.add(singleJob);
                                     }
-                                    singleJobList.add(singleJob);
+                                    adapter.setSingleJobList(singleJobList);
+                                } else {
+                                    Log.e("Vijay", "Error getting documents.", task.getException());
                                 }
-                                adapter.setSingleJobList(singleJobList);
-                            } else {
-                                Log.e("Vijay", "Error getting documents.", task.getException());
                             }
-                        }
-                    });
+                        });
 
-        } else {
-            Toast.makeText(getContext(), R.string.internet_not_available, Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(getContext(), R.string.internet_not_available, Toast.LENGTH_LONG).show();
+            }
+        }else {
+            singleJobList.clear();
+            Type listType = new TypeToken<ArrayList<SingleJob>>() {
+            }.getType();
+            List<SingleJob> yourClassList = new Gson().fromJson(savedInstanceState.getString(SAVE_STATE), listType);
+            singleJobList.addAll(yourClassList);
+            adapter.setSingleJobList(singleJobList);
         }
-
 
         return view;
     }
@@ -154,5 +171,16 @@ public class JobFragment extends Fragment {
     public void onPause() {
         super.onPause();
         bottomUp.cancel();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+
+        if (singleJobList.size()>0) {
+            String value = gson.toJson(singleJobList);
+            outState.putString(SAVE_STATE, value);
+        }
+
+        super.onSaveInstanceState(outState);
     }
 }

@@ -50,6 +50,8 @@ public class ProfileFragment extends Fragment {
     private ImageView img_hello;
     private ImageView img_big_holder, img_road, img_tree;
     private TextView tv_bio;
+    private final String SAVE_STATE = "savestate";
+    private String bioDetails;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -95,25 +97,32 @@ public class ProfileFragment extends Fragment {
         NetworkDetector detector = new NetworkDetector(getContext());
         if (detector.isNetworkAvailable()) {
 
+            if (savedInstanceState == null) {
 
-            FirebaseFirestore db = FirebaseFirestore.getInstance();
-            db.collection("profile")
-                    .get()
-                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if (task.isSuccessful()) {
-                                for (QueryDocumentSnapshot document : task.getResult()) {
-                                    Log.e("Vijay", document.getId() + " => " + document.getData());
-                                    Map<String, Object> keyValue = document.getData();
-                                    if (keyValue.containsKey("description"))
-                                        tv_bio.setText(String.valueOf(keyValue.get("description")).replaceAll("\\\\n", System.getProperty("line.separator")));
+                FirebaseFirestore db = FirebaseFirestore.getInstance();
+                db.collection("profile")
+                        .get()
+                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    for (QueryDocumentSnapshot document : task.getResult()) {
+                                        Log.e("Vijay", document.getId() + " => " + document.getData());
+                                        Map<String, Object> keyValue = document.getData();
+                                        if (keyValue.containsKey("description")) {
+                                            bioDetails = String.valueOf(keyValue.get("description")).replaceAll("\\\\n", System.getProperty("line.separator"));
+                                            tv_bio.setText(bioDetails);
+                                        }
+                                    }
+                                } else {
+                                    Log.e("Vijay", "Error getting documents.", task.getException());
                                 }
-                            } else {
-                                Log.e("Vijay", "Error getting documents.", task.getException());
                             }
-                        }
-                    });
+                        });
+            }else {
+                bioDetails = savedInstanceState.getString(SAVE_STATE);
+                tv_bio.setText(bioDetails);
+            }
         } else {
             tv_bio.setText(R.string.internet_not_available);
         }
@@ -122,5 +131,11 @@ public class ProfileFragment extends Fragment {
         return view;
     }
 
-
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        if (bioDetails!=null) {
+            outState.putString(SAVE_STATE, bioDetails);
+        }
+        super.onSaveInstanceState(outState);
+    }
 }

@@ -163,8 +163,10 @@ public class ProjectsFragment extends Fragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
 
-        String value = gson.toJson(singleProjects);
-        outState.putString(SAVE_STATE, value);
+        if (singleProjects.size()>0) {
+            String value = gson.toJson(singleProjects);
+            outState.putString(SAVE_STATE, value);
+        }
         super.onSaveInstanceState(outState);
     }
 }

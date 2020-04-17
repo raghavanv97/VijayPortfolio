@@ -43,6 +43,8 @@ public class EducationFragment extends Fragment {
     Animation bottomUp;
     ImageView img_bus;
     ObjectAnimator cloudAnimator;
+    private String educationRestCall;
+    private final String SAVE_STATE = "savestate";
 
     public EducationFragment() {
         // Required empty public constructor
@@ -75,7 +77,12 @@ public class EducationFragment extends Fragment {
         tv_education.setCharacterDelay(150);
         NetworkDetector detector = new NetworkDetector(getContext());
         if (detector.isNetworkAvailable()) {
-            setEducationTextView();
+            if (savedInstanceState == null) {
+                setEducationTextView();
+            }else {
+                educationRestCall = savedInstanceState.getString(SAVE_STATE);
+                tv_education.animateText(educationRestCall);
+            }
         } else {
             tv_education.animateText(getString(R.string.internet_not_available));
         }
@@ -155,7 +162,8 @@ public class EducationFragment extends Fragment {
                                 Map<String, Object> keyValue = document.getData();
                                 if (keyValue.containsKey("description")) {
                                     Log.e("raghavan", String.valueOf(keyValue.get("description")));
-                                    tv_education.animateText(String.valueOf(keyValue.get("description")));
+                                    educationRestCall = String.valueOf(keyValue.get("description"));
+                                    tv_education.animateText(educationRestCall);
                                 }
                             }
                         } else {
@@ -179,5 +187,12 @@ public class EducationFragment extends Fragment {
         bottomUp.cancel();
         cloudAnimator.cancel();
         animator.cancel();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        if (educationRestCall!=null)
+            outState.putString(SAVE_STATE, educationRestCall);
+        super.onSaveInstanceState(outState);
     }
 }
