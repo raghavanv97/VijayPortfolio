@@ -81,7 +81,9 @@ public class ProjectsFragment extends Fragment {
 
 
                 CustomTabsIntent customTabsIntent = builder.build();
-                customTabsIntent.launchUrl(getContext(), Uri.parse(singleProjects.get(position).getLink()));
+                String link = singleProjects.get(position).getLink();
+                if (link != null)
+                    customTabsIntent.launchUrl(getContext(), Uri.parse(link));
             }
 
             @Override
@@ -99,7 +101,7 @@ public class ProjectsFragment extends Fragment {
             NetworkDetector detector = new NetworkDetector(getContext());
             if (detector.isNetworkAvailable()) {
                 FirebaseFirestore db = FirebaseFirestore.getInstance();
-                db.collection("projects")
+                db.collection("projects").orderBy("order")
                         .get()
                         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                             @Override
@@ -163,7 +165,7 @@ public class ProjectsFragment extends Fragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
 
-        if (singleProjects.size()>0) {
+        if (singleProjects.size() > 0) {
             String value = gson.toJson(singleProjects);
             outState.putString(SAVE_STATE, value);
         }

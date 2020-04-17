@@ -113,7 +113,7 @@ public class JobFragment extends Fragment {
             if (detector.isNetworkAvailable()) {
 
                 FirebaseFirestore db = FirebaseFirestore.getInstance();
-                db.collection("jobs")
+                db.collection("jobs").orderBy("order")
                         .get()
                         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                             @Override

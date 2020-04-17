@@ -57,7 +57,8 @@ public class ProjectsRecyclerViewAdapter extends RecyclerView.Adapter<ProjectsRe
     public void onBindViewHolder(@NonNull final ProjectViewHolder holder, int position) {
         SingleProject singleProject = singleProjectList.get(position);
         holder.title.setText(singleProject.getTitle());
-        holder.description.setText(singleProject.getDescription());
+        String description = singleProject.getDescription().replaceAll("\\\\n", System.getProperty("line.separator"));
+        holder.description.setText(description);
         if (singleProject.getImageLink() != null) {
             StorageReference gsReference = firebaseStorage.getReferenceFromUrl(singleProject.getImageLink());
 
